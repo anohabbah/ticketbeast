@@ -14,7 +14,7 @@ class ViewConcertListingTest extends TestCase
     /** @test */
     public function user_can_view_published_concerts_listing(): void
     {
-        $concert = Concert::create([
+        $concert = Concert::factory()->published()->create([
             'title' => 'The Red Chord',
             'subtitle' => 'With animosity ans Lethargy',
             'date' => Carbon::parse('December 13, 2016 8:00pm'),
@@ -25,7 +25,6 @@ class ViewConcertListingTest extends TestCase
             'state' => 'ON',
             'zip' => '17916',
             'additional_information' => 'For tickets, call (555) 555-5555.',
-            'published_at' => Carbon::parse('-1 week')
         ]);
 
         $response = $this->get('/concerts/' . $concert->id);

@@ -35,4 +35,22 @@ class ConcertFactory extends Factory
             'additional_information' => 'For tickets, call (555) 555-5555.',
         ];
     }
+
+    public function published(): Factory
+    {
+        return $this->state(function () {
+            return [
+                'published_at' => Carbon::parse('-1 week')
+            ];
+        });
+    }
+
+    public function unpublished(): Factory
+    {
+        return $this->state(function () {
+            return [
+                'published_at' => null,
+            ];
+        });
+    }
 }
