@@ -14,7 +14,6 @@ class ViewConcertListingTest extends TestCase
     /** @test */
     public function user_can_view_a_concert_list(): void
     {
-        $this->withoutExceptionHandling();
         $concert = Concert::create([
             'title' => 'The Red Chord',
             'subtitle' => 'With animosity ans Lethargy',
