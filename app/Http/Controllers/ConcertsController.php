@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class ConcertsController extends Controller
 {
     function show($id) {
-        $concert = Concert::find($id);
+        $concert = Concert::whereNotNull('published_at')->findOrFail($id);
         return view('concerts.show', ['concert' => $concert]);
     }
 }
