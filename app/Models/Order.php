@@ -25,10 +25,24 @@ class Order extends Model
         return $this->tickets()->count();
     }
 
+    public function toArray(): array
+    {
+        return [
+            'email' => $this->email,
+            'ticket_quantity' => $this->ticketQuantity(),
+            'amount' => $this->ticketQuantity() * $this->concert->ticket_price,
+        ];
+    }
+
     // RELATIONSHIPS
 
     public function tickets()
     {
         return $this->hasMany(Ticket::class);
+    }
+
+    public function concert()
+    {
+        return $this->belongsTo(Concert::class);
     }
 }

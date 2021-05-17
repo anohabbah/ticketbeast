@@ -52,7 +52,12 @@ class PurchaseTicketsTest extends TestCase
             'payment_token' => $this->paymentGateway->getValidTestToken(),
         ]);
 
-        $response->assertStatus(201);
+        $response->assertStatus(201)
+            ->assertJsonFragment([
+                'email' => 'john@example.com',
+                'ticket_quantity' => 3,
+                'amount' => 9750,
+            ]);
 
         self::assertEquals(9750, $this->paymentGateway->totalCharges());
         self::assertTrue($concert->hasOrderFor('john@example.com'));
