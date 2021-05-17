@@ -80,11 +80,27 @@ class Concert extends Model
         foreach (range(1, $quantity) as $i) {
             $this->tickets()->create([]);
         }
+
+        return $this;
     }
 
     public function ticketsRemaining()
     {
         return $this->tickets()->available()->count();
+    }
+
+    public function hasOrderFor(string $customerEmail): bool
+    {
+        return $this->orders()->where('email', $customerEmail)->count() > 0;
+    }
+
+    /**
+     * @param string $customerEmail
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function orderFor(string $customerEmail): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->orders()->where('email', $customerEmail)->get();
     }
 
     // RELATIONSHIPS

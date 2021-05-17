@@ -12,6 +12,11 @@ class Ticket extends Model
 
     protected $guarded = [];
 
+    public function release()
+    {
+        $this->update(['order_id' => null]);
+    }
+
     // SCOPES
 
     public function scopeAvailable(Builder $query): Builder
