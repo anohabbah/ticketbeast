@@ -94,6 +94,26 @@ class PurchaseTicketsTest extends TestCase
     }
 
     /** @test */
+    public function cannot_purchase_more_tickets_than_remain(): void
+    {
+        $concert = Concert::factory()->published()->create();
+        $concert->addTickets(50);
+  
+        $response = $this->orderTickets($concert, [
+            'email' => 'john@example.com',
+            'ticket_quantity' => 52,
+            'payment_token' => $this->paymentGateway->getValidTestToken(),
+        ]);
+
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+
+        $order = $concert->orders()->where('email', 'john@example.com')->first();
+        self::assertNull($order);
+        self::assertEquals(0, $this->paymentGateway->totalCharges());
+        self::assertEquals(0, $concert->ticketsRemaining());
+    }
+
+    /** @test */
     public function email_is_required_to_purchases_tickets(): void
     {
         $concert = Concert::factory()->published()->create();
