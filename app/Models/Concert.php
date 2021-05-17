@@ -58,6 +58,13 @@ class Concert extends Model
         return number_format($this->ticket_price / 100, 2);
     }
 
+    // RELATIONSHIPS
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
     // QUERY SCOPES
 
     public function scopePublished(Builder $query): Builder
