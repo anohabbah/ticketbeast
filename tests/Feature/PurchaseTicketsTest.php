@@ -44,6 +44,7 @@ class PurchaseTicketsTest extends TestCase
     public function customer_can_purchase_concert_tickets(): void
     {
         $concert = Concert::factory()->published()->create(['ticket_price' => 3250]);
+        $concert->addTickets(3);
 
         $response = $this->orderTickets($concert, [
             'email' => 'john@example.com',
@@ -98,7 +99,7 @@ class PurchaseTicketsTest extends TestCase
     {
         $concert = Concert::factory()->published()->create();
         $concert->addTickets(50);
-  
+
         $response = $this->orderTickets($concert, [
             'email' => 'john@example.com',
             'ticket_quantity' => 52,
@@ -110,7 +111,7 @@ class PurchaseTicketsTest extends TestCase
         $order = $concert->orders()->where('email', 'john@example.com')->first();
         self::assertNull($order);
         self::assertEquals(0, $this->paymentGateway->totalCharges());
-        self::assertEquals(0, $concert->ticketsRemaining());
+        self::assertEquals(50, $concert->ticketsRemaining());
     }
 
     /** @test */
