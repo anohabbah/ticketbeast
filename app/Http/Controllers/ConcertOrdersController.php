@@ -29,8 +29,12 @@ class ConcertOrdersController extends Controller
         ]);
 
         try {
-            $order = $concert->orderTickets(request('email'), request('ticket_quantity'));
+            $tickets = $concert->findTickets(request('ticket_quantity'));
+
             $this->paymentGateway->charge(request('ticket_quantity') * $concert->ticket_price, request('payment_token'));
+
+            $order = $concert->createOrder(\request('email'), $tickets);
+
             return response()->json($order->toArray(), Response::HTTP_CREATED);
         } catch (PaymentFailedException | NotEnoughTicketsException $e) {
             return response()->json([], Response::HTTP_UNPROCESSABLE_ENTITY);
