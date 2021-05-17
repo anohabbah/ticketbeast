@@ -60,6 +60,23 @@ class PurchaseTicketsTest extends TestCase
     }
 
     /** @test */
+    public function an_order_is_not_created_if_payment_fail(): void
+    {
+        $concert = Concert::factory()->create(['ticket_price' => 3250]);
+
+        $response = $this->orderTickets($concert, [
+            'email' => 'john@example.com',
+            'ticket_quantity' => 3,
+            'payment_token' => 'invalid-test-token',
+        ]);
+
+        $response->assertStatus(422);
+
+        $order = $concert->orders()->where('email', 'john@example.com')->first();
+        self::assertNull($order);
+    }
+
+    /** @test */
     public function email_is_required_to_purchases_tickets(): void
     {
         $concert = Concert::factory()->create();
