@@ -30,18 +30,18 @@ class Order extends Model
         return [
             'email' => $this->email,
             'ticket_quantity' => $this->ticketQuantity(),
-            'amount' => $this->ticketQuantity() * $this->concert->ticket_price,
+            'amount' => $this->amount,
         ];
     }
 
     // RELATIONSHIPS
 
-    public function tickets()
+    public function tickets(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Ticket::class);
     }
 
-    public function concert()
+    public function concert(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Concert::class);
     }

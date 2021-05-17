@@ -66,7 +66,10 @@ class Concert extends Model
             throw new NotEnoughTicketsException();
         }
 
-        $order = $this->orders()->create(['email' => $email]);
+        $order = $this->orders()->create([
+            'email' => $email,
+            'amount' => $ticketQuantity * $this->ticket_price,
+        ]);
 
         foreach ($tickets as $ticket) {
             $order->tickets()->save($ticket);
@@ -94,10 +97,6 @@ class Concert extends Model
         return $this->orders()->where('email', $customerEmail)->count() > 0;
     }
 
-    /**
-     * @param string $customerEmail
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
     public function orderFor(string $customerEmail): \Illuminate\Database\Eloquent\Collection
     {
         return $this->orders()->where('email', $customerEmail)->get();
