@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Billing\PaymentGateway;
 use App\Models\Concert;
-use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -19,18 +18,12 @@ class ConcertOrdersController extends Controller
 
     public function store(int $concertId)
     {
+        /** @var Concert $concert */
         $concert = Concert::find($concertId);
-        $ticketQuantity = \request('ticket_quantity');
-        $amount = $ticketQuantity * $concert->ticket_price;
-        $token = \request('payment_token');
-        $this->paymentGateway->charge($amount, $token);
 
-        /** @var Order $order */
-        $order = $concert->orders()->create(['email' => \request('email')]);
+        $this->paymentGateway->charge(\request('ticket_quantity') * $concert->ticket_price, \request('payment_token'));
 
-        foreach (range(1, $ticketQuantity) as $i) {
-            $order->tickets()->create();
-        }
+        $concert->orderTickets(\request('email'), \request('ticket_quantity'));
 
         return response()->json([], Response::HTTP_CREATED);
     }
