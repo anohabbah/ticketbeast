@@ -10,6 +10,8 @@ class Ticket extends Model
 {
     use HasFactory;
 
+    protected $guarded = [];
+
     // SCOPES
 
     public function scopeAvailable(Builder $query): Builder

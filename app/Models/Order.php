@@ -11,6 +11,15 @@ class Order extends Model
 
     protected $guarded = [];
 
+    public function cancel()
+    {
+        foreach ($this->tickets as $ticket) {
+            $ticket->update(['order_id' => null]);
+        }
+
+        $this->delete();
+    }
+
     // RELATIONSHIPS
 
     public function tickets()
