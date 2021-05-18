@@ -25,11 +25,11 @@ class Order extends Model
 
     protected $guarded = [];
 
-    public static function forTickets($tickets, string $email): Order
+    public static function forTickets($tickets, string $email, int $amount): Order
     {
         $order = self::create([
             'email' => $email,
-            'amount' => $tickets->sum('price'),
+            'amount' => $amount,
         ]);
 
         foreach ($tickets as $ticket) {
