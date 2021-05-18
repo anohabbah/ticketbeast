@@ -6,10 +6,24 @@ use App\Models\Concert;
 use App\Models\Order;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use function PHPUnit\Framework\assertEquals;
 
 class OrderTest extends TestCase
 {
     use RefreshDatabase;
+
+    /** @test */
+    public function creating_order_from_tickets_and_email(): void
+    {
+        /** @var Concert $concert */
+        $concert = Concert::factory()->create(['ticket_price' => 1200])->addTickets(5);
+
+        $order = Order::forTickets($concert->findTickets(3), 'jane@example.com');
+
+        self::assertEquals('jane@example.com', $order->email);
+        self::assertEquals(3, $order->ticketQuantity());
+        self::assertEquals(3600, $order->amount);
+    }
 
     /** @test */
     public function converting_to_an_array(): void

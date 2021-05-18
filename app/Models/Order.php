@@ -2,16 +2,44 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
+/**
+ * Class Order
+ * @package App\Models
+ *
+ * @property int id
+ * @property string email
+ * @property int amount
+ * @property Carbon created_at
+ * @property Carbon updated_at
+ * @property Collection tickets
+ * @property Concert concert
+ */
 class Order extends Model
 {
     use HasFactory;
 
     protected $guarded = [];
 
-    public function cancel()
+    public static function forTickets($tickets, string $email): Order
+    {
+        $order = self::create([
+            'email' => $email,
+            'amount' => $tickets->sum('price'),
+        ]);
+
+        foreach ($tickets as $ticket) {
+            $order->tickets()->save($ticket);
+        }
+
+        return $order;
+    }
+
+    public function cancel(): void
     {
         foreach ($this->tickets as $ticket) {
             $ticket->release();
