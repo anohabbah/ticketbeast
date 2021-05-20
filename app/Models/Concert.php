@@ -76,7 +76,13 @@ class Concert extends Model
         if ($tickets->count() < $ticketQuantity) {
             throw new NotEnoughTicketsException();
         }
+
         return $tickets;
+    }
+
+    public function reserveTickets(int $quantity)
+    {
+        return $this->findTickets($quantity);
     }
 
     /**

@@ -4,12 +4,23 @@ namespace Tests\Unit;
 
 
 use App\Models\Concert;
+use App\Models\Ticket;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class TicketTest extends TestCase
 {
     use RefreshDatabase;
+
+    /** @test */
+    public function a_ticket_can_be_reserved(): void
+    {
+        $ticket = Ticket::factory()->create();
+
+        $ticket->reserve();
+
+        self::assertNotNull($ticket->fresh()->reserved_at);
+    }
 
     /** @test */
     public function a_ticket_can_be_release(): void

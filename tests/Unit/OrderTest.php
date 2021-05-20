@@ -18,7 +18,7 @@ class OrderTest extends TestCase
         /** @var Concert $concert */
         $concert = Concert::factory()->create()->addTickets(5);
 
-        $order = Order::forTickets($concert->findTickets(3), 'jane@example.com', 3600);
+        $order = Order::forTickets($concert->reserveTickets(3), 'jane@example.com', 3600);
 
         self::assertEquals('jane@example.com', $order->email, 3600);
         self::assertEquals(3, $order->ticketQuantity());
