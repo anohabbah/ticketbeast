@@ -26,7 +26,13 @@ class PurchaseTicketsTest extends TestCase
 
     public function orderTickets($concert, $params): TestResponse
     {
-        return $this->json('POST', "/concerts/{$concert->id}/orders", $params);
+        $savedRequest = $this->app['request'];
+
+        $response = $this->json('POST', "/concerts/{$concert->id}/orders", $params);
+
+        $this->app['request'] = $savedRequest;
+
+        return $response;
     }
 
     /**
@@ -121,7 +127,7 @@ class PurchaseTicketsTest extends TestCase
 
         $this->paymentGateway->beforeFirstCharge(function() use ($concert) {
             $response = $this->orderTickets($concert, [
-                'email' => 'personA@example.com',
+                'email' => 'personB@example.com',
                 'ticket_quantity' => 1,
                 'payment_token' => $this->paymentGateway->getValidTestToken(),
             ]);
