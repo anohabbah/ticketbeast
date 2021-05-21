@@ -89,12 +89,13 @@ class PurchaseTicketsTest extends TestCase
     /** @test */
     public function an_order_is_not_created_if_payment_fail(): void
     {
-        $concert = Concert::factory()->published()->create(['ticket_price' => 3250]);
+        $concert = Concert::factory()->published()->create(['ticket_price' => 3250])->addTickets(3);
 
         $response = $this->orderTickets($concert, [
             'email' => 'john@example.com',
             'ticket_quantity' => 3,
             'payment_token' => 'invalid-test-token',
+
         ]);
 
         $response->assertStatus(422);
