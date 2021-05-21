@@ -98,8 +98,8 @@ class PurchaseTicketsTest extends TestCase
         ]);
 
         $response->assertStatus(422);
-
         self::assertFalse($concert->hasOrderFor('john@example.com'));
+        self::assertEquals(3, $concert->ticketsRemaining());
     }
 
     /** @test */
