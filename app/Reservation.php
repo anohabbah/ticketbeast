@@ -24,4 +24,9 @@ class Reservation
     {
         $this->tickets->each->release();
     }
+
+    public function tickets()
+    {
+        return $this->tickets;
+    }
 }
