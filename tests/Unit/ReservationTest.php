@@ -2,13 +2,17 @@
 
 namespace Tests\Unit;
 
+use App\Models\Concert;
 use App\Models\Ticket;
 use App\Reservation;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
 use Tests\TestCase;
 
 class ReservationTest extends TestCase
 {
+    use RefreshDatabase;
+
     /** @test */
     public function calculating_total_cost(): void
     {
@@ -59,5 +63,19 @@ class ReservationTest extends TestCase
         $reservation = new Reservation($tickets, 'john@example.com');
 
         $reservation->cancel();
+    }
+
+    /** @test */
+    public function completing_a_reservation(): void
+    {
+        $concert = Concert::factory()->create(['ticket_price' => 1200]);
+        $tickets = Ticket::factory(3)->create(['concert_id' => $concert->id]);
+        $reservation = new Reservation($tickets, 'john@example.com');
+
+        $order = $reservation->complete();
+
+        self::assertEquals('john@example.com', $order->email);
+        self::assertEquals(3, $order->ticketQuantity());
+        self::assertEquals(3600, $order->amount);
     }
 }

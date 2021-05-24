@@ -2,6 +2,8 @@
 
 namespace App;
 
+use App\Models\Order;
+
 class Reservation
 {
     private $tickets;
@@ -41,5 +43,10 @@ class Reservation
     public function email(): string
     {
         return $this->email;
+    }
+
+    public function complete()
+    {
+        return Order::forTickets($this->tickets(), $this->email(), $this->totalCost());
     }
 }
