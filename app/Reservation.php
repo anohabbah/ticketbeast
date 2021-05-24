@@ -15,6 +15,7 @@ class Reservation
     /**
      * Reservation constructor.
      * @param $tickets
+     * @param string $email
      */
     public function __construct($tickets, string $email)
     {
@@ -45,8 +46,10 @@ class Reservation
         return $this->email;
     }
 
-    public function complete()
+    public function complete($paymentGateway, $paymentToken)
     {
+        $paymentGateway->charge($this->totalCost(), $paymentToken);
+
         return Order::forTickets($this->tickets(), $this->email(), $this->totalCost());
     }
 }

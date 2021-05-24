@@ -31,11 +31,9 @@ class ConcertOrdersController extends Controller
         try {
             $reservation = $concert->reserveTickets(request('ticket_quantity'), request('email'));
 
-            $this->paymentGateway->charge($reservation->totalCost(), request('payment_token'));
+            $order = $reservation->complete($this->paymentGateway, request('payment_token'));
 
-            $order = $reservation->complete();
-
-            return response()->json($order->toArray(), Response::HTTP_CREATED);
+            return response()->json($order, Response::HTTP_CREATED);
         } catch (PaymentFailedException $e) {
             $reservation->cancel();
             return response()->json([], Response::HTTP_UNPROCESSABLE_ENTITY);
