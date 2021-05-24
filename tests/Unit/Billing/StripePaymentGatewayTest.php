@@ -9,15 +9,41 @@ use Tests\TestCase;
 
 class StripePaymentGatewayTest extends TestCase
 {
-    /** @test */
-    public function charges_with_valid_payment_token_are_successful(): void
-    {
-        $paymentGateway = new StripePaymentGateway(config('services.stripe.secret'));
+    /**
+     * @var \Stripe\StripeClient
+     */
+    private $stripe;
+    /**
+     * @var mixed
+     */
+    private $lastCharge;
 
-        $stripe = new \Stripe\StripeClient(
-            config('services.stripe.secret')
-        );
-        $token = $stripe->tokens->create([
+    /**
+     * @param \Stripe\StripeClient $stripe
+     * @return mixed
+     * @throws \Stripe\Exception\ApiErrorException
+     */
+    private function lastCharge()
+    {
+        return $this->stripe->charges->all(['limit' => 1])->first();
+    }
+
+    private function newCharges()
+    {
+        return $this->stripe->charges->all([
+            'limit' => 1,
+            'ending_before' => $this->lastCharge->id,
+        ])['data'];
+    }
+
+    /**
+     * @param \Stripe\StripeClient $stripe
+     * @return string
+     * @throws \Stripe\Exception\ApiErrorException
+     */
+    private function validToken(): string
+    {
+        $token = $this->stripe->tokens->create([
             'card' => [
                 'number' => '4242424242424242',
                 'exp_month' => 1,
@@ -25,11 +51,27 @@ class StripePaymentGatewayTest extends TestCase
                 'cvc' => '123',
             ],
         ]);
+        return $token->id;
+    }
 
-        $paymentGateway->charge(2500, $token->id);
+    protected function setUp(): void
+    {
+        parent::setUp();
 
-        $lastCharge = $stripe->charges->all(['limit' => 1])['data'][0];
+        $this->stripe = new \Stripe\StripeClient(
+            config('services.stripe.secret')
+        );
+        $this->lastCharge = $this->lastCharge();
+    }
 
-        self::assertEquals(2500, $lastCharge->amount);
+    /** @test */
+    public function charges_with_valid_payment_token_are_successful(): void
+    {
+        $paymentGateway = new StripePaymentGateway(config('services.stripe.secret'));
+
+        $paymentGateway->charge(2500, $this->validToken());
+
+        self::assertCount(1, $this->newCharges());
+        self::assertEquals(2500, $this->lastCharge()->amount);
     }
 }
