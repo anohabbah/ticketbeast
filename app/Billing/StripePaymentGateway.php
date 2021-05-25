@@ -10,20 +10,19 @@ class StripePaymentGateway implements PaymentGateway
 {
 
     /**
-     * @var string
+     * @var \Stripe\StripeClient
      */
-    private $apiKey;
+    private $stripe;
 
     public function __construct(string $apiKey)
     {
-        $this->apiKey = $apiKey;
+        $this->stripe = new \Stripe\StripeClient($apiKey);
     }
 
     public function charge(int $amount, string $token): void
     {
         try {
-            $stripe = new \Stripe\StripeClient($this->apiKey);
-            $stripe->charges->create([
+            $this->stripe->charges->create([
                 'amount' => $amount,
                 'currency' => 'eur',
                 'source' => $token,
@@ -31,5 +30,44 @@ class StripePaymentGateway implements PaymentGateway
         } catch (InvalidRequestException $e) {
             throw new PaymentFailedException();
         }
+    }
+
+    public function getValidTestToken(): string
+    {
+        $token = $this->stripe->tokens->create([
+            'card' => [
+                'number' => '4242424242424242',
+                'exp_month' => 1,
+                'exp_year' => date('Y') + 1,
+                'cvc' => '123',
+            ],
+        ]);
+        return $token->id;
+    }
+
+    public function newChargesDuring($callback)
+    {
+        $latestCharge = $this->lastCharge();
+
+        $callback($this);
+
+        return $this->newChargesSince($latestCharge)->pluck('amount');
+    }
+
+    /**
+     * @return mixed
+     * @throws ApiErrorException
+     */
+    private function lastCharge()
+    {
+        return $this->stripe->charges->all(['limit' => 1])->first();
+    }
+
+    private function newChargesSince(\Stripe\Charge $charge = null)
+    {
+        return collect($this->stripe->charges->all([
+            'limit' => 1,
+            'ending_before' => $charge->id ?? null,
+        ])['data']);
     }
 }

@@ -7,30 +7,13 @@ use App\Billing\PaymentFailedException;
 use App\Billing\PaymentGateway;
 use Tests\TestCase;
 
-class FakePaymentGatewayTest extends TestCase {
-    /** @test */
-    public function charges_with_a_valid_payment_token_are_successful(): void
+class FakePaymentGatewayTest extends TestCase
+{
+    use PaymentGatewayContractTests;
+
+    private function getPaymentGateway(): PaymentGateway
     {
-        $paymentGateway = new FakePaymentGateway();
-
-        $paymentGateway->charge(2500, $paymentGateway->getValidTestToken());
-
-       self::assertEquals(2500, $paymentGateway->totalCharges());
-    }
-
-    /**
-     * @test
-     */
-    public function charges_with_invalid_payment_token_fail(): void
-    {
-        try {
-            $paymentGateway = new FakePaymentGateway();
-            $paymentGateway->charge(2500, 'invalid-token ');
-        } catch (PaymentFailedException $e) {
-            self::assertTrue(true);
-            return;
-        }
-        self::fail();
+        return new FakePaymentGateway();
     }
 
     /** @test */

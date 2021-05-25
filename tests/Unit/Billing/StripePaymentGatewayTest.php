@@ -5,6 +5,7 @@ namespace Tests\Unit\Billing;
 
 
 use App\Billing\PaymentFailedException;
+use App\Billing\PaymentGateway;
 use App\Billing\StripePaymentGateway;
 use Tests\TestCase;
 
@@ -15,85 +16,10 @@ use Tests\TestCase;
  */
 class StripePaymentGatewayTest extends TestCase
 {
+    use PaymentGatewayContractTests;
 
-    protected function setUp(): void
+    private function getPaymentGateway(): PaymentGateway
     {
-        parent::setUp();
-
-        $this->stripe = new \Stripe\StripeClient(
-            config('services.stripe.secret')
-        );
-        $this->lastCharge = $this->lastCharge();
-    }
-
-    /** @test */
-    public function charges_with_valid_payment_token_are_successful(): void
-    {
-        $paymentGateway = new StripePaymentGateway(config('services.stripe.secret'));
-
-        $paymentGateway->charge(2500, $this->validToken());
-
-        self::assertCount(1, $this->newCharges());
-        self::assertEquals(2500, $this->lastCharge()->amount);
-    }
-
-    /**
-     * @test
-     */
-    public function charges_with_invalid_payment_token_fail(): void
-    {
-        try {
-            $paymentGateway = new StripePaymentGateway(config('services.stripe.secret'));
-            $paymentGateway->charge(2500, 'invalid-token ');
-        } catch (PaymentFailedException $e) {
-            self::assertCount(0, $this->newCharges());
-            return;
-        }
-        self::fail('Charging with an invalid token did not throw an exception.');
-    }
-
-    /**
-     * @var \Stripe\StripeClient
-     */
-    private $stripe;
-    /**
-     * @var mixed
-     */
-    private $lastCharge;
-
-    /**
-     * @param \Stripe\StripeClient $stripe
-     * @return mixed
-     * @throws \Stripe\Exception\ApiErrorException
-     */
-    private function lastCharge()
-    {
-        return $this->stripe->charges->all(['limit' => 1])->first();
-    }
-
-    private function newCharges()
-    {
-        return $this->stripe->charges->all([
-            'limit' => 1,
-            'ending_before' => $this->lastCharge->id,
-        ])['data'];
-    }
-
-    /**
-     * @param \Stripe\StripeClient $stripe
-     * @return string
-     * @throws \Stripe\Exception\ApiErrorException
-     */
-    private function validToken(): string
-    {
-        $token = $this->stripe->tokens->create([
-            'card' => [
-                'number' => '4242424242424242',
-                'exp_month' => 1,
-                'exp_year' => date('Y') + 1,
-                'cvc' => '123',
-            ],
-        ]);
-        return $token->id;
+        return new StripePaymentGateway(config('services.stripe.secret'));
     }
 }

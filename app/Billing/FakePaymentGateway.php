@@ -6,7 +6,8 @@ namespace App\Billing;
 
 class FakePaymentGateway implements PaymentGateway
 {
-    private \Illuminate\Support\Collection $charges;
+    /** @var \Illuminate\Support\Collection $charges */
+    private $charges;
     private $beforeFirstChargeCallback;
 
     public function __construct()
@@ -43,5 +44,14 @@ class FakePaymentGateway implements PaymentGateway
     public function beforeFirstCharge(\Closure $callback)
     {
         $this->beforeFirstChargeCallback = $callback;
+    }
+
+    public function newChargesDuring($callback)
+    {
+        $chargesFrom = $this->charges->count();
+
+        $callback($this);
+
+        return $this->charges->slice($chargesFrom)->reverse()->values();
     }
 }
