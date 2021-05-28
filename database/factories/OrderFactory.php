@@ -22,6 +22,8 @@ class OrderFactory extends Factory
     public function definition()
     {
         return [
+            'card_last_four_number' => ' 1234',
+            'confirmation_number' => 'ORDERCONFIRMATION1234',
             'amount' => 5250,
             'email' => 'somebody@example.com',
         ];

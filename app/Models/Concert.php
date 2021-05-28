@@ -61,13 +61,6 @@ class Concert extends Model
         return number_format($this->ticket_price / 100, 2);
     }
 
-    public function orderTickets(string $email, int $ticketQuantity)
-    {
-        $tickets = $this->findTickets($ticketQuantity);
-
-        return $this->createOrder($email, $tickets);
-    }
-
     /**
      * @param int $ticketQuantity
      * @return mixed
@@ -86,16 +79,6 @@ class Concert extends Model
     {
         $tickets = $this->findTickets($quantity)->each->reserve();
         return new Reservation($tickets, $email);
-    }
-
-    /**
-     * @param string $email
-     * @param $tickets
-     * @return Model
-     */
-    public function createOrder(string $email, $tickets): Model
-    {
-        return Order::forTickets($tickets, $email, $tickets->sum('price'));
     }
 
     public function addTickets(int $quantity)
