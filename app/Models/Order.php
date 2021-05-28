@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
+use App\Billing\Charge;
 use App\Facades\OrderConfirmationNumber;
-use App\OrderConfirmationNumberGenerator;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -17,6 +17,7 @@ use Illuminate\Support\Collection;
  * @property int amount
  * @property string email
  * @property string confirmation_number
+ * @property string card_last_four_number
  * @property Carbon created_at
  * @property Carbon updated_at
  * @property Collection tickets
@@ -28,12 +29,13 @@ class Order extends Model
 
     protected $guarded = [];
 
-    public static function forTickets($tickets, string $email, int $amount): Order
+    public static function forTickets($tickets, string $email, Charge $charge): Order
     {
         $order = self::create([
             'confirmation_number' => OrderConfirmationNumber::generate(),
             'email' => $email,
-            'amount' => $amount,
+            'amount' => $charge->amount(),
+            'card_last_four_number' => $charge->cardLastFour(),
         ]);
 
         foreach ($tickets as $ticket) {

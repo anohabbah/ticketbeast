@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Billing\Charge;
 use App\Models\Concert;
 use App\Models\Order;
 use App\Models\Ticket;
@@ -18,15 +19,15 @@ class OrderTest extends TestCase
     /** @test */
     public function creating_order_from_tickets_email_and_amount(): void
     {
-        /** @var Concert $concert */
-        $concert = Concert::factory()->create()->addTickets(5);
+        $tickets = Ticket::factory(3)->create();
+        $charge = new Charge(['amount' => 3600, 'card_last_four' => '1234']);
 
-        $order = Order::forTickets($concert->reserveTickets(3, 'jane@example.com' )->tickets(), 'jane@example.com', 3600);
+        $order = Order::forTickets($tickets, 'jane@example.com', $charge);
 
         self::assertEquals('jane@example.com', $order->email);
         self::assertEquals(3, $order->ticketQuantity());
         self::assertEquals(3600, $order->amount);
-        self::assertEquals(2, $concert->ticketsRemaining());
+        self::assertEquals('1234', $order->card_last_four_number);
     }
 
     /** @test */
