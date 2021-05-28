@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\OrderConfirmationNumberGenerator;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,8 +13,9 @@ use Illuminate\Support\Collection;
  * @package App\Models
  *
  * @property int id
- * @property string email
  * @property int amount
+ * @property string email
+ * @property string confirmation_number
  * @property Carbon created_at
  * @property Carbon updated_at
  * @property Collection tickets
@@ -28,6 +30,7 @@ class Order extends Model
     public static function forTickets($tickets, string $email, int $amount): Order
     {
         $order = self::create([
+            'confirmation_number' => app(OrderConfirmationNumberGenerator::class)->generate(),
             'email' => $email,
             'amount' => $amount,
         ]);
@@ -47,10 +50,16 @@ class Order extends Model
     public function toArray(): array
     {
         return [
+            'confirmation_number' => $this->confirmation_number,
             'email' => $this->email,
             'ticket_quantity' => $this->ticketQuantity(),
             'amount' => $this->amount,
         ];
+    }
+
+    public static function findByConfirmationNumber($confirmationNumber)
+    {
+        return self::where('confirmation_number', $confirmationNumber)->firstOrFail();
     }
 
     // RELATIONSHIPS

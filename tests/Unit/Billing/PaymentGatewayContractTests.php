@@ -49,7 +49,7 @@ trait PaymentGatewayContractTests
     {
         $paymentGateway = $this->getPaymentGateway();
         $paymentGateway->charge(2000, $paymentGateway->getValidTestToken());
-        $paymentGateway->charge(2000, $paymentGateway->getValidTestToken());
+        $paymentGateway->charge(3000, $paymentGateway->getValidTestToken());
 
         $newCharges = $paymentGateway->newChargesDuring(function ($paymentGateway) {
             $paymentGateway->charge(4000, $paymentGateway->getValidTestToken());

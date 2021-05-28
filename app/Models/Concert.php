@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  * Class Concert
  * @package App\Models
  *
+ * @property int id
  * @property string title
  * @property string subtitle
  * @property string ticket_price

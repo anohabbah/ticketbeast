@@ -66,7 +66,6 @@ class StripePaymentGateway implements PaymentGateway
     private function newChargesSince(\Stripe\Charge $charge = null)
     {
         return collect($this->stripe->charges->all([
-            'limit' => 1,
             'ending_before' => $charge->id ?? null,
         ])['data']);
     }

@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Billing\PaymentGateway;
+use App\Billing\StripePaymentGateway;
+use App\OrderConfirmationNumberGenerator;
+use App\RandomOrderConfirmationNumber;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -23,6 +27,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        $this->app->bind(StripePaymentGateway::class, function () {
+            return new StripePaymentGateway(config('services.stripe.secret'));
+        });
+
+        $this->app->bind(PaymentGateway::class, StripePaymentGateway::class);
+        $this->app->bind(OrderConfirmationNumberGenerator::class, RandomOrderConfirmationNumber::class);
     }
 }

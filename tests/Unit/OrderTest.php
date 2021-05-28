@@ -6,6 +6,7 @@ use App\Models\Concert;
 use App\Models\Order;
 use App\Models\Ticket;
 use App\Reservation;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use function PHPUnit\Framework\assertEquals;
@@ -29,16 +30,46 @@ class OrderTest extends TestCase
     }
 
     /** @test */
+    public function retrieving_an_order_by_its_confirmation_number(): void
+    {
+        /** @var Order $order */
+        $order = Order::factory()->create([
+            'confirmation_number' => 'CONFIRMATIONNUMBER'
+        ]);
+
+        $orderFound = Order::findByConfirmationNumber('CONFIRMATIONNUMBER');
+
+        assertEquals($order->id, $orderFound->id);
+    }
+
+    /** @test */
+    public function retrieving_a_nonexistent_order_by_confirmation_number_throws_an_exception(): void
+    {
+        try {
+            Order::findByConfirmationNumber('CONFIRMATIONNUMBER');
+        } catch (ModelNotFoundException $e) {
+            self::assertNull(null);
+            return;
+        }
+
+        fail('No matching order was found for the specified confirmation number, but no exception thrown.');
+    }
+
+    /** @test */
     public function converting_to_an_array(): void
     {
-        /** @var Concert $concert */
-        $concert = Concert::factory()->create(['ticket_price' => 3250])->addTickets(10);
-        $order = $concert->orderTickets('jane@example.com', 5);
+        $order = Order::factory()->create([
+            'confirmation_number' => 'ORDERCONFIRMATION1234',
+            'email' => 'jane@example.com',
+            'amount' => 6000,
+        ]);
+        Ticket::factory(5)->create(['order_id' => $order->id]);
 
         self::assertEquals([
+            'confirmation_number' => 'ORDERCONFIRMATION1234',
             'email' => 'jane@example.com',
             'ticket_quantity' => 5,
-            'amount' => 16250,
+            'amount' => 6000,
         ], $order->toArray());
     }
 }
