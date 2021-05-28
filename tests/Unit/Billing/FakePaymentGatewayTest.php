@@ -29,6 +29,7 @@ class FakePaymentGatewayTest extends TestCase
         });
 
         $paymentGateway->charge(2500, $paymentGateway->getValidTestToken());
+
         self::assertEquals(1, $callbackRan);
         self::assertEquals(5000, $paymentGateway->totalCharges());
     }

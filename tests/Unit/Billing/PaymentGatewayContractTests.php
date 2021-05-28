@@ -6,6 +6,8 @@ namespace Tests\Unit\Billing;
 
 use App\Billing\PaymentFailedException;
 use App\Billing\PaymentGateway;
+use App\Billing\StripePaymentGateway;
+use function PHPUnit\Framework\assertEquals;
 
 trait PaymentGatewayContractTests
 {
@@ -21,7 +23,21 @@ trait PaymentGatewayContractTests
         });
 
         self::assertCount(1, $newCharges);
-        self::assertEquals(2500, $newCharges->sum());
+        self::assertEquals(2500, $newCharges->map->amount()->sum());
+    }
+
+    /** @test */
+    public function can_get_details_about_a_successful_charge(): void
+    {
+        $paymentGateway = $this->getPaymentGateway();
+
+        $charge = $paymentGateway->charge(
+            2500,
+            $paymentGateway->getValidTestToken($paymentGateway::TEST_CARD_NUMBER)
+        );
+
+        assertEquals(substr($paymentGateway::TEST_CARD_NUMBER, -4), $charge->cardLastFour());
+        assertEquals(2500, $charge->amount());
     }
 
     /**
@@ -57,6 +73,6 @@ trait PaymentGatewayContractTests
         });
 
         self::assertCount(2, $newCharges);
-        self::assertEquals([5000, 4000], $newCharges->all());
+        self::assertEquals([5000, 4000], $newCharges->map->amount()->all());
     }
 }
