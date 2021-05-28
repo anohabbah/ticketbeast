@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Facades\OrderConfirmationNumber;
 use App\OrderConfirmationNumberGenerator;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -30,7 +31,7 @@ class Order extends Model
     public static function forTickets($tickets, string $email, int $amount): Order
     {
         $order = self::create([
-            'confirmation_number' => app(OrderConfirmationNumberGenerator::class)->generate(),
+            'confirmation_number' => OrderConfirmationNumber::generate(),
             'email' => $email,
             'amount' => $amount,
         ]);
