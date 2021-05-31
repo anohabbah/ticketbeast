@@ -59,18 +59,27 @@ class OrderTest extends TestCase
     /** @test */
     public function converting_to_an_array(): void
     {
+        /** @var Order $order */
         $order = Order::factory()->create([
             'confirmation_number' => 'ORDERCONFIRMATION1234',
             'email' => 'jane@example.com',
             'amount' => 6000,
         ]);
-        Ticket::factory(5)->create(['order_id' => $order->id]);
+        $order->tickets()->saveMany([
+            Ticket::factory()->create(['code' => 'TICKETCODE1']),
+            Ticket::factory()->create(['code' => 'TICKETCODE2']),
+            Ticket::factory()->create(['code' => 'TICKETCODE3']),
+        ]);
 
         self::assertEquals([
             'confirmation_number' => 'ORDERCONFIRMATION1234',
             'email' => 'jane@example.com',
-            'ticket_quantity' => 5,
             'amount' => 6000,
+            'tickets' => [
+                ['code' => 'TICKETCODE1'],
+                ['code' => 'TICKETCODE2'],
+                ['code' => 'TICKETCODE3'],
+            ]
         ], $order->toArray());
     }
 }
