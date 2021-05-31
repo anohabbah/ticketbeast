@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Facades\TicketCode;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -29,6 +30,12 @@ class Ticket extends Model
     public function reserve()
     {
         $this->update(['reserved_at' => Carbon::now()]);
+    }
+
+    public function claimFor(Order $order)
+    {
+        $this->code = TicketCode::generate();
+        $order->tickets()->save($this);
     }
 
     // ACCESSORS AND MUTATORS
