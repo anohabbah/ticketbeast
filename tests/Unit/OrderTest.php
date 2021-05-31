@@ -19,15 +19,19 @@ class OrderTest extends TestCase
     /** @test */
     public function creating_order_from_tickets_email_and_amount(): void
     {
-        $tickets = Ticket::factory(3)->create();
         $charge = new Charge(['amount' => 3600, 'card_last_four' => '1234']);
+        $tickets = collect([
+            \Mockery::spy(Ticket::class),
+            \Mockery::spy(Ticket::class),
+            \Mockery::spy(Ticket::class),
+        ]);
 
         $order = Order::forTickets($tickets, 'jane@example.com', $charge);
 
         self::assertEquals('jane@example.com', $order->email);
-        self::assertEquals(3, $order->ticketQuantity());
         self::assertEquals(3600, $order->amount);
         self::assertEquals('1234', $order->card_last_four_number);
+        $tickets->each->shouldHaveReceived('claimFor', [$order]);
     }
 
     /** @test */
