@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Billing\FakePaymentGateway;
 use App\Billing\PaymentGateway;
 use App\Facades\OrderConfirmationNumber;
+use App\Facades\TicketCode;
 use App\Models\Concert;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
@@ -53,6 +54,7 @@ class PurchaseTicketsTest extends TestCase
         $this->withoutExceptionHandling();
 
         OrderConfirmationNumber::shouldReceive('generate')->andReturn('ORDERCONFIRMATION1234');
+        TicketCode::shouldReceive('generateFor')->andReturn('TICKETCODE1', 'TICKETCODE2', 'TICKETCODE3');
 
         $concert = Concert::factory()->published()->create(['ticket_price' => 3250])
             ->addTickets(3);
@@ -67,8 +69,12 @@ class PurchaseTicketsTest extends TestCase
             ->assertJsonFragment([
                 'confirmation_number' => 'ORDERCONFIRMATION1234',
                 'email' => 'john@example.com',
-                'ticket_quantity' => 3,
                 'amount' => 9750,
+                'tickets' => [
+                    ['code' => 'TICKETCODE1'],
+                    ['code' => 'TICKETCODE2'],
+                    ['code' => 'TICKETCODE3'],
+                ],
             ]);
 
         self::assertEquals(9750, $this->paymentGateway->totalCharges());
