@@ -22,7 +22,7 @@ class RandomOrderConfirmationNumberTest extends TestCase
 
         $generated = $generator->generate();
 
-        self::assertRegExp('/^[A-Z0-9]+$/', $generated);
+        self::assertMatchesRegularExpression('/^[A-Z0-9]+$/', $generated);
     }
 
     /** @test */
