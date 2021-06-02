@@ -3,7 +3,6 @@
 
 namespace App\Billing;
 
-
 class Charge
 {
     /**

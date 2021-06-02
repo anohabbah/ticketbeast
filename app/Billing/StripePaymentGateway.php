@@ -2,7 +2,6 @@
 
 namespace App\Billing;
 
-
 use Stripe\Exception\ApiErrorException;
 use Stripe\Exception\InvalidRequestException;
 
@@ -48,6 +47,7 @@ class StripePaymentGateway implements PaymentGateway
                 'cvc' => '123',
             ],
         ]);
+
         return $token->id;
     }
 

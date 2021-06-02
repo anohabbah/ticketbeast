@@ -18,7 +18,7 @@ class PurchaseTicketsTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @var FakePaymentGateway $paymentGateway */
+    /** @var FakePaymentGateway */
     private $paymentGateway;
 
     protected function setUp(): void
@@ -150,7 +150,7 @@ class PurchaseTicketsTest extends TestCase
         $concert = Concert::factory()->published()->create(['ticket_price' => 1200])
             ->addTickets(3);
 
-        $this->paymentGateway->beforeFirstCharge(function() use ($concert) {
+        $this->paymentGateway->beforeFirstCharge(function () use ($concert) {
             $response = $this->orderTickets($concert, [
                 'email' => 'personB@example.com',
                 'ticket_quantity' => 1,
@@ -211,7 +211,6 @@ class PurchaseTicketsTest extends TestCase
         ]);
 
         $this->assertValidationError($response, 'ticket_quantity');
-
     }
 
     /** @test */
@@ -226,7 +225,6 @@ class PurchaseTicketsTest extends TestCase
         ]);
 
         $this->assertValidationError($response, 'ticket_quantity');
-
     }
 
     /** @test */
@@ -242,4 +240,3 @@ class PurchaseTicketsTest extends TestCase
         $this->assertValidationError($response, 'payment_token');
     }
 }
-

@@ -3,7 +3,6 @@
 
 namespace App\Facades;
 
-
 use App\OrderConfirmationNumberGenerator;
 use Illuminate\Support\Facades\Facade;
 

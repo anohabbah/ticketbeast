@@ -2,7 +2,6 @@
 
 namespace Tests\Unit;
 
-
 use App\Facades\TicketCode;
 use App\Models\Order;
 use App\Models\Ticket;

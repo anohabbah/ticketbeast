@@ -12,7 +12,6 @@ use Tests\TestCase;
 
 class ConcertTest extends TestCase
 {
-
     use RefreshDatabase;
 
     /** @test */
@@ -82,11 +81,13 @@ class ConcertTest extends TestCase
     {
         /** @var Concert $concert */
         $concert = Concert::factory()->create()->addTickets(10);
+
         try {
             $concert->reserveTickets(11, 'jane@example.com');
         } catch (NotEnoughTicketsException $e) {
             self::assertFalse($concert->hasOrderFor('jane@example.com'));
             self::assertEquals(10, $concert->ticketsRemaining());
+
             return;
         }
 
@@ -117,6 +118,7 @@ class ConcertTest extends TestCase
             $concert->reserveTickets(2, 'john@example.com');
         } catch (NotEnoughTicketsException $e) {
             self::assertEquals(1, $concert->ticketsRemaining());
+
             return;
         }
 
@@ -133,6 +135,7 @@ class ConcertTest extends TestCase
             $concert->reserveTickets(2, 'john@example.com');
         } catch (NotEnoughTicketsException $e) {
             self::assertEquals(1, $concert->ticketsRemaining());
+
             return;
         }
 

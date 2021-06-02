@@ -7,13 +7,15 @@ use App\Billing\PaymentGateway;
 use App\Exceptions\NotEnoughTicketsException;
 use App\Mail\OrderConfirmationEmail;
 use App\Models\Concert;
-use App\Models\Order;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Mail;
 
 class ConcertOrdersController extends Controller
 {
-    private PaymentGateway $paymentGateway;
+    /**
+     * @var PaymentGateway
+     */
+    private $paymentGateway;
 
     public function __construct(PaymentGateway $paymentGateway)
     {
@@ -40,6 +42,7 @@ class ConcertOrdersController extends Controller
             return response()->json($order, Response::HTTP_CREATED);
         } catch (PaymentFailedException $e) {
             $reservation->cancel();
+
             return response()->json([], Response::HTTP_UNPROCESSABLE_ENTITY);
         } catch (NotEnoughTicketsException $e) {
             return response()->json([], Response::HTTP_UNPROCESSABLE_ENTITY);

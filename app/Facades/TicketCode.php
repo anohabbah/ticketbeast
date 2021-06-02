@@ -3,9 +3,8 @@
 
 namespace App\Facades;
 
-
-use Illuminate\Support\Facades\Facade;
 use App\TicketCodeGenerator;
+use Illuminate\Support\Facades\Facade;
 
 class TicketCode extends Facade
 {

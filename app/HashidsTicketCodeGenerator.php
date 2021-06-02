@@ -3,7 +3,6 @@
 
 namespace App;
 
-
 class HashidsTicketCodeGenerator implements TicketCodeGenerator
 {
     /**

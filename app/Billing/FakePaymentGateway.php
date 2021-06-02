@@ -3,14 +3,13 @@
 
 namespace App\Billing;
 
-
 use Illuminate\Support\Str;
 
 class FakePaymentGateway implements PaymentGateway
 {
     public const TEST_CARD_NUMBER = '4242424242424242';
 
-    /** @var \Illuminate\Support\Collection $charges */
+    /** @var \Illuminate\Support\Collection */
     private $charges;
     private $tokens;
     private $beforeFirstChargeCallback;
@@ -25,6 +24,7 @@ class FakePaymentGateway implements PaymentGateway
     {
         $token = 'fake-tok_' . Str::random(24);
         $this->tokens[$token] = $cardNumber;
+
         return $token;
     }
 

@@ -3,14 +3,12 @@
 namespace Tests\Unit;
 
 use App\Billing\Charge;
-use App\Models\Concert;
 use App\Models\Order;
 use App\Models\Ticket;
-use App\Reservation;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 use function PHPUnit\Framework\assertEquals;
+use Tests\TestCase;
 
 class OrderTest extends TestCase
 {
@@ -39,7 +37,7 @@ class OrderTest extends TestCase
     {
         /** @var Order $order */
         $order = Order::factory()->create([
-            'confirmation_number' => 'CONFIRMATIONNUMBER'
+            'confirmation_number' => 'CONFIRMATIONNUMBER',
         ]);
 
         $orderFound = Order::findByConfirmationNumber('CONFIRMATIONNUMBER');
@@ -54,6 +52,7 @@ class OrderTest extends TestCase
             Order::findByConfirmationNumber('CONFIRMATIONNUMBER');
         } catch (ModelNotFoundException $e) {
             self::assertNull(null);
+
             return;
         }
 
@@ -83,7 +82,7 @@ class OrderTest extends TestCase
                 ['code' => 'TICKETCODE1'],
                 ['code' => 'TICKETCODE2'],
                 ['code' => 'TICKETCODE3'],
-            ]
+            ],
         ], $order->toArray());
     }
 }
