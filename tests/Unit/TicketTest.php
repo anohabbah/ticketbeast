@@ -6,7 +6,6 @@ namespace Tests\Unit;
 use App\Facades\TicketCode;
 use App\Models\Order;
 use App\Models\Ticket;
-use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -41,7 +40,7 @@ class TicketTest extends TestCase
     {
         $order = Order::factory()->create();
         $ticket = Ticket::factory()->create(['code' => null]);
-        TicketCode ::shouldReceive('generate')->andReturn('TICKETCODE1');
+        TicketCode ::shouldReceive('generateFor')->andReturn('TICKETCODE1');
 
         $ticket->claimFor($order);
 
