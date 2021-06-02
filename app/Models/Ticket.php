@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @property Concert concert
  * @property int price
+ * @property int id
  */
 class Ticket extends Model
 {

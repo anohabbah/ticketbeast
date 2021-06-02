@@ -4,7 +4,9 @@
 namespace App;
 
 
+use App\Models\Ticket;
+
 interface TicketCodeGenerator
 {
-    public function generate();
+    public function generateFor(Ticket $ticket);
 }

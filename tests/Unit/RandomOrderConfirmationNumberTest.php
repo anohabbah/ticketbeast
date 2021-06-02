@@ -2,7 +2,7 @@
 
 namespace Tests\Unit;
 
-use App\RandomOrderConfirmationNumber;
+use App\RandomOrderConfirmationNumberGenerator;
 use Tests\TestCase;
 
 class RandomOrderConfirmationNumberTest extends TestCase
@@ -10,7 +10,7 @@ class RandomOrderConfirmationNumberTest extends TestCase
     /** @test */
     public function must_be_24_characters_long(): void
     {
-        $generator = new RandomOrderConfirmationNumber();
+        $generator = new RandomOrderConfirmationNumberGenerator();
 
         self::assertEquals(24, strlen($generator->generate()));
     }
@@ -18,7 +18,7 @@ class RandomOrderConfirmationNumberTest extends TestCase
     /** @test */
     public function can_only_contain_uppercase_letter_and_numbers(): void
     {
-        $generator = new RandomOrderConfirmationNumber();
+        $generator = new RandomOrderConfirmationNumberGenerator();
 
         $generated = $generator->generate();
 
@@ -28,7 +28,7 @@ class RandomOrderConfirmationNumberTest extends TestCase
     /** @test */
     public function cannot_contain_ambiguous_characters(): void
     {
-        $generator = new RandomOrderConfirmationNumber();
+        $generator = new RandomOrderConfirmationNumberGenerator();
 
         $generated = $generator->generate();
 
@@ -41,7 +41,7 @@ class RandomOrderConfirmationNumberTest extends TestCase
     /** @test */
     public function order_confirmation_number_must_be_unique(): void
     {
-        $generator = new RandomOrderConfirmationNumber();
+        $generator = new RandomOrderConfirmationNumberGenerator();
 
         $confirmationNumbers = array_map(function () use ($generator) {
             return $generator->generate();
